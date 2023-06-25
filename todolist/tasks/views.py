@@ -1,7 +1,7 @@
 from .models import Todo, Tag
 from .forms import TodoForm, TagForm
 
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.views import generic
 from django.urls import reverse, reverse_lazy
 
@@ -31,15 +31,13 @@ class TodoDeleteView(generic.DeleteView):
 
 
 class TodoUpdateStatusView(generic.View):
-    @staticmethod
+
     def get(request, pk):
         task = Todo.objects.get(id=pk)
         task.is_complete = not task.is_complete
         task.save()
-
         return redirect("todo:todo-list")
 
-    @staticmethod
     def post(request, pk):
         task = Todo.objects.get(id=pk)
         task.is_complete = request.POST.get("is_complete", not task.is_complete)
