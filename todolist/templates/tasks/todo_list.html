@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+  <h1>
+    TODO list
+    <a href="{% url 'todo:todo-create' %}" class="btn btn-primary link-to-page">
+      Create
+    </a>
+  </h1>
+
+  {% if todo_list %}
+    <table class="table">
+      <tr>
+        <th>Content</th>
+        <th>Is Complete</th>
+        <th>Created</th>
+        <th>Deadline</th>
+        <th>Tags</th>
+        <th>Update</th>
+        <th>Delete</th>
+        <th></th>
+      </tr>
+
+      {% for task in todo_list %}
+        <tr>
+          <td>
+              {{ task.content }}
+          </td>
+          <td>
+            {% if task.is_complete %}
+              <span style="color:green">Done</span>
+            {% else %}
+              <span style="color:red">Not done</span>
+            {% endif %}
+          </td>
+          <td>
+              {{ task.created_at }}
+          </td>
+          <td>
+              {{ task.deadline }}
+          </td>
+          <td>
+            {% for tag in task.tag.all %}
+              {{ tag.name }}
+            {% endfor %}
+          </td>
+          <td>
+              <a href="{% url 'todo:todo-update' pk=task.id %}">
+                Update
+              </a>
+            </td>
+            <td>
+              <a style="color: red"
+                href="{% url 'todo:todo-delete' pk=task.id %}">
+                Delete
+              </a>
+            </td>
+          <td>
+            {% if task.is_complete %}
+
+            <form action="{% url 'todo:todo-update-status' pk=task.id %}" method="post" style="float: right;">
+              {% csrf_token %}
+              <input type="hidden" name="task_id" value="{{ task.id }}">
+              <input type="submit" value="Undo" class="btn btn-secondary justify">
+            </form>
+              {% else %}
+               <form action="{% url 'todo:todo-update-status' pk=task.id %}" method="post" style="float: right;">
+                 {% csrf_token %}
+                 <input type="hidden" name="task_id" value="{{ task.id }}">
+                 <input type="submit" value="Complete" class="btn btn-success justify">
+                </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+
+  {% else %}
+      <p>There are no tasks found.</p>
+  {% endif %}
+{% endblock %}
