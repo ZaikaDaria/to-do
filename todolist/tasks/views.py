@@ -32,13 +32,7 @@ class TodoDeleteView(generic.DeleteView):
 
 class TodoUpdateStatusView(generic.View):
 
-    def get(request, pk):
-        task = Todo.objects.get(id=pk)
-        task.is_complete = not task.is_complete
-        task.save()
-        return redirect("todo:todo-list")
-
-    def post(request, pk):
+    def post(self, request, pk):
         task = Todo.objects.get(id=pk)
         task.is_complete = request.POST.get("is_complete", not task.is_complete)
         task.save()
